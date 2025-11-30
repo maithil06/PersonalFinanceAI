@@ -2,6 +2,10 @@
 
 A multi-agent AI system that performs **portfolio-level sentiment analysis** on stock tickers. It combines recent market data from Yahoo Finance with curated, high-reliability financial news to generate an explainable **Portfolio Sentiment Analysis** in Markdown.
 
+
+<img width="1920" height="1038" alt="Screenshot (543)" src="https://github.com/user-attachments/assets/3bc557d2-9312-4890-80d5-c523d6f9254a" />
+
+
 > ⚠️ This tool is for research and educational purposes only. It is **not** financial advice.
 
 ---
