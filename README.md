@@ -2,6 +2,12 @@
 
 A multi-agent AI system that performs **portfolio-level sentiment analysis** on stock tickers. It combines recent market data from Yahoo Finance with curated, high-reliability financial news to generate an explainable **Portfolio Sentiment Analysis** in Markdown.
 
+<p align="center">
+  <a href="https://huggingface.co/spaces/Maithil06/PersonalFinancialAnalyst">
+    <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Space-blue" alt="Hugging Face Space" />
+  </a>
+</p>
+
 
 <img width="1920" height="1038" alt="Screenshot (543)" src="https://github.com/user-attachments/assets/3bc557d2-9312-4890-80d5-c523d6f9254a" />
 
