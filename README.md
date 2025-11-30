@@ -1,42 +1,85 @@
 # 📈 Personal Finance AI: Sentiment & Market Analyzer
 
-A multi-agent AI system that performs comprehensive sentiment analysis on stock portfolios. By combining real-time market data from Yahoo Finance with verified news from credible sources, this tool provides a sophisticated "Sentiment Index" for investment research.
+A multi-agent AI system that performs **portfolio-level sentiment analysis** on stock tickers. It combines recent market data from Yahoo Finance with curated, high-reliability financial news to generate an explainable **Portfolio Sentiment Analysis** in Markdown.
 
-## 🚀 Project Overview
+> ⚠️ This tool is for research and educational purposes only. It is **not** financial advice.
 
-This application leverages the **Agno** framework to orchestrate a team of AI agents powered by **Anthropic's Claude**. Unlike simple news aggregators, it filters for high-reliability sources (Bloomberg, WSJ, Reuters) and synthesizes that qualitative data with quantitative market metrics (technicals, fundamentals) to generate a balanced investment outlook.
+---
 
-## ⚙️ How It Works (Project Flow)
+## 🚀 What This App Actually Does
 
-The system follows a multi-step pipeline to ensure high-quality analysis:
+Given one or more stock tickers (e.g. `AAPL, MSFT, NVDA`), the app:
 
-1.  **User Input:** The user enters stock tickers (e.g., AAPL, MSFT) into the Gradio web interface.
-2.  **Market Data Retrieval:** The system fetches real-time prices, volume, technical indicators (SMA, volatility), and fundamental data (P/E, Market Cap) using `yfinance`.
-3.  **Agent Orchestration:** A team of two specialized AI agents is initialized:
-    * **🕵️ News Reliability Analyst:** Searches the web using DuckDuckGo but applies strict filters to only accept news from verified financial publications (rejecting social media/blogs).
-    * **🧠 Portfolio Sentiment Synthesizer:** Takes the structured news data and the quantitative market data to produce a final report.
-4.  **Synthesis & Scoring:** The agents calculate a "Sentiment Score" (-100 to +100) and generate a detailed report explaining the drivers behind the score.
-5.  **Output:** The analysis is rendered in Markdown within the Gradio UI.
+1. **Fetches recent market data** for each ticker using `yfinance-cache` (with a safe fallback to `yfinance` if needed).
+2. Computes **technical indicators & performance metrics** (SMA10/20/50, 7-day & ~30-day returns, volatility, volume trends, etc.) and formats them into a structured Markdown block for each ticker.
+3. Feeds this structured market data into a **multi-agent team** built with the **Agno** framework:
+   - A **News Reliability Analyst** agent that uses DuckDuckGo tools to find **only credible financial news**.
+   - A **Portfolio Sentiment Synthesizer** agent that merges news + market data into a full portfolio report.
+4. Returns a **single coherent Markdown report** in the Gradio interface, including:
+   - Per-stock analysis,
+   - A portfolio-level sentiment index,
+   - A table of individual stock scores.
 
-## 🛠️ Tech Stack
+---
 
-* **Language:** Python 3.10+
-* **UI Framework:** [Gradio](https://gradio.app/) (Web Interface)
-* **AI Framework:** [Agno](https://github.com/agno-agi/agno) (Agent Orchestration & Teams)
-* **LLM Provider:** Anthropic (Claude 3.5 Sonnet / Sonnet 4)
-* **Market Data:** `yfinance-cache` (Yahoo Finance API wrapper with caching)
-* **Search Tool:** DuckDuckGo Search (`ddgs`)
-* **Database:** SQLite (for agent memory and history)
+## 🔍 Data & Features (From the Code)
 
-## 📦 Installation & Setup
+### 1. Market Data & Technicals
 
-### Prerequisites
+`get_market_data(ticker, period="3mo")`:
 
-* Python 3.10 or higher
-* An Anthropic API Key
+- Uses **`yfc` (yfinance-cache)** if installed, otherwise gracefully falls back to **`yfinance`**.
+- Fetches historical OHLCV data over the last 3 months.
+- Computes:
 
-### 1. Clone the Repository
+  - **Simple Moving Averages:**
+    - SMA-10, SMA-20, SMA-50 on closing prices
+  - **Returns & Volatility:**
+    - Daily returns (%)
+    - Standard deviation of daily returns as **volatility**
+    - **7-day change** and **~30-day change** in price
+  - **Volume Analysis:**
+    - Average volume (full period)
+    - Recent volume (last 5 days)
+    - Volume trend classified as **Increasing / Decreasing / Stable**
+  - **Trend Classification:**
+    - `Strong Uptrend`, `Strong Downtrend`, `Uptrend`, `Downtrend`, or `Sideways` based on the relationship between price and SMAs.
 
-```bash
-git clone [https://github.com/yourusername/personalfinanceai.git](https://github.com/yourusername/personalfinanceai.git)
-cd personalfinanceai
+- Pulls **fundamentals & metadata** from `stock.info` (where available), including:
+  - Company name, sector, industry
+  - 52-week high/low
+  - 50- and 200-day averages
+  - Market cap, trailing/forward P/E, PEG, price-to-book
+  - Dividend yield/rate & payout ratio
+  - Beta
+  - Analyst recommendation (e.g. `buy`, `hold`, `sell`)
+  - Mean target price and number of analyst opinions
+
+- Formats all of this into a **Markdown block** for each ticker:
+
+  ```markdown
+  ## 📈 TECHNICAL & FUNDAMENTAL DATA: TICKER
+
+  ### 🏢 COMPANY INFO
+  - Name, Sector, Industry
+
+  ### 💰 CURRENT PRICE METRICS
+  ...
+
+  ### 📊 PRICE PERFORMANCE
+  - 7-Day Change
+  - 30-Day Change
+  - Average Daily Return
+  - Daily Volatility
+
+  ### 📉 TECHNICAL INDICATORS
+  - SMA10, SMA20, SMA50 + whether current price is above/below each
+  - Trend classification
+
+  ### 📦 VOLUME ANALYSIS
+  - Average volume, recent volume, volume trend, beta
+
+  ### 💼 VALUATION RATIOS
+  ### 💵 DIVIDEND INFORMATION
+  ### 🎯 ANALYST CONSENSUS
+  ### 📊 TECHNICAL SUMMARY
