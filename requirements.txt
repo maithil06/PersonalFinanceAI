@@ -1,0 +1,14 @@
+gradio>=4.0.0
+yfinance-cache
+pandas==2.2.0
+agno
+ddgs
+anthropic
+spaces>=0.43b1
+pandas
+numpy
+sqlalchemy
+pysqlite3-binary
+requests
+beautifulsoup4
+lxml
